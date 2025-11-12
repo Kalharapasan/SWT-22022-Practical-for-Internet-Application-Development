@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard</title>
+  <link rel="stylesheet" href="css/dashboard_style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Welcome to the Dashboard</h1>
+    <button onclick="logout()">Logout</button>
+
+    <h2>Add New Expense</h2>
+    <form id="addExpenseForm" onsubmit="addExpense(event)">
+      <label>Description</label>
+      <input type="text" id="description" required>
+      <label>Amount</label>
+      <input type="number" id="amount" required>
+      <button type="submit">Add Expense</button>
+    </form>
+
+    <h2>Expense List</h2>
+    <table id="expenseTable">
+      <thead>
+        <tr>
+          <th>Description</th>
+          <th>Amount</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="expenseTableBody">
+      </tbody>
+    </table>
+
+    <div id="editForm" style="display:none;">
+      <h2>Edit Expense</h2>
+      <form onsubmit="updateExpense(event)">
+        <input type="hidden" id="expenseId">
+        <label>Description</label>
+        <input type="text" id="editDescription" required>
+        <label>Amount</label>
+        <input type="number" id="editAmount" required>
+        <button type="submit">Update</button>
+        <button type="button" onclick="document.getElementById('editForm').style.display='none'">Cancel</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="script/script.js"></script>
+</body>
+</html>

@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  
+  <script>
+    async function logout() {
+      try {
+        const response = await fetch('php/logout.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' }
+        });
+        const result = await response.json();
+        if (result.message === "Logout success!") {
+          window.location.href = "index.html";
+        } else {
+          alert("Error logging out. Please try again.");
+        }
+      } catch (error) {
+        console.error('Logout error:', error);
+      }
+    }
+
+    async function loadExpenses() {
+      try {
+        const response = await fetch('php/view_expenses.php');
+        const data = await response.json();
+        const expenseTableBody = document.getElementById('expenseTableBody');
+        expenseTableBody.innerHTML = '';
+        
+        if (Array.isArray(data.records) && data.records.length > 0) {
+          data.records.forEach(expense => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+              <td>${expense.created_at}</td>
+              <td>${expense.description}</td>
+              <td>$${expense.amount}</td>
+              <td>
+                <button class="btn btn-primary btn-sm" onclick="showEditForm(${expense.id}, '${expense.description}', ${expense.amount})">Edit</button>
+                <button class="btn btn-danger btn-sm" onclick="deleteExpense(${expense.id})">Delete</button>
+              </td>
+            `;
+            expenseTableBody.appendChild(row);
+          });
+        } else {
+          const row = document.createElement('tr');
+          row.innerHTML = '<td colspan="4" class="text-center">No expenses found.</td>';
+          expenseTableBody.appendChild(row);
+        }
+      } catch (error) {
+        console.error('Error loading expenses:', error);
+      }
+    }
+
+    async function addExpense() {
+      const description = document.getElementById('description').value;
+      const amount = document.getElementById('amount').value;
+      try {
+        const response = await fetch('php/add_expense.php', {
+          method: 'POST',
+          body: JSON.stringify({ description, amount }),
+          headers: { 'Content-Type': 'application/json' }
+        });
+        const result = await response.json();
+        alert(result.message);
+        loadExpenses();
+        document.getElementById('addExpenseForm').reset();
+      } catch (error) {
+        console.error('Error adding expense:', error);
+      }
+    }
+
+    function showEditForm(id, description, amount) {
+      document.getElementById('expenseId').value = id;
+      document.getElementById('editDescription').value = description;
+      document.getElementById('editAmount').value = amount;
+      document.getElementById('editForm').style.display = 'block';
+    }
+
+    async function updateExpense() {
+      const id = document.getElementById('expenseId').value;
+      const description = document.getElementById('editDescription').value;
+      const amount = document.getElementById('editAmount').value;
+      try {
+        const response = await fetch('php/edit_expense.php', {
+          method: 'POST',
+          body: JSON.stringify({ id, description, amount }),
+          headers: { 'Content-Type': 'application/json' }
+        });
+        const result = await response.json();
+        alert(result.message);
+        document.getElementById('editForm').style.display = 'none';
+        loadExpenses();
+      } catch (error) {
+        console.error('Error updating expense:', error);
+      }
+    }
+
+    async function deleteExpense(id) {
+      try {
+        const response = await fetch('php/delete_expense.php', {
+          method: 'POST',
+          body: JSON.stringify({ id }),
+          headers: { 'Content-Type': 'application/json' }
+        });
+        const result = await response.json();
+        alert(result.message);
+        loadExpenses();
+      } catch (error) {
+        console.error('Error deleting expense:', error);
+      }
+    }
+  </script>
+</head>
+<body class="bg-light">
+  <div class="container mt-5">
+    <h1 class="text-center">Welcome to the Dashboard</h1>
+    <p class="lead text-center">You are now logged in.</p>
+    <div class="text-center mb-4">
+      <button class="btn btn-danger" onclick="logout()">Logout</button>
+    </div>
+
+    <!-- Form to add a new expense -->
+    <div class="mb-4">
+      <h4>Add New Expense</h4>
+      <form id="addExpenseForm" onsubmit="event.preventDefault(); addExpense();">
+        <div class="form-group">
+          <label for="description">Description</label>
+          <input type="text" id="description" class="form-control" placeholder="Enter description" required>
+        </div>
+        <div class="form-group">
+          <label for="amount">Amount</label>
+          <input type="number" id="amount" class="form-control" placeholder="Enter amount" required>
+        </div>
+        <button type="submit" class="btn btn-success">Add Expense</button>
+      </form>
+    </div>
+
+    <!-- Table to display expenses -->
+    <h4>Expense List</h4>
+    <table class="table table-bordered table-striped">
+      <thead class="thead-dark">
+        <tr>
+          <th>Date</th>
+          <th>Description</th>
+          <th>Amount</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="expenseTableBody">
+        <!-- Expenses will be loaded here dynamically -->
+      </tbody>
+    </table>
+
+    <!-- Form to edit an expense -->
+    <div id="editForm" style="display: none;">
+      <h4>Edit Expense</h4>
+      <form onsubmit="event.preventDefault(); updateExpense();">
+        <input type="hidden" id="expenseId">
+        <div class="form-group">
+          <label for="editDescription">Description</label>
+          <input type="text" id="editDescription" class="form-control" required>
+        </div>
+        <div class="form-group">
+          <label for="editAmount">Amount</label>
+          <input type="number" id="editAmount" class="form-control" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Update Expense</button>
+        <button type="button" class="btn btn-secondary" onclick="document.getElementById('editForm').style.display='none'">Cancel</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", loadExpenses);
+  </script>
+</body>
+</html>

@@ -1,0 +1,92 @@
+let selectedBookId = null;
+
+async function add() {
+    const title = document.getElementById("title").value;
+    const author = document.getElementById("author").value;
+    const isbn = document.getElementById("isbn").value;
+    const price = document.getElementById("price").value;
+    const description = document.getElementById("description").value;
+
+    const response = await fetch('php/insert.php', {
+        method: "POST",
+        body: JSON.stringify({ title, author, isbn, price, description }),
+        headers: { 'Content-Type': 'application/json' }
+    });
+
+    const result = await response.json();
+    alert(result.message);
+    loadBooks();
+}
+
+async function update() {
+    if (!selectedBookId) {
+        alert("Please select a book to update.");
+        return;
+    }
+
+    const title = document.getElementById("title").value;
+    const author = document.getElementById("author").value;
+    const isbn = document.getElementById("isbn").value;
+    const price = document.getElementById("price").value;
+    const description = document.getElementById("description").value;
+
+    const response = await fetch('php/update.php', {
+        method: "POST",
+        body: JSON.stringify({ bookId: selectedBookId, title, author, isbn, price, description }),
+        headers: { 'Content-Type': 'application/json' }
+    });
+
+    const result = await response.json();
+    alert(result.message);
+    loadBooks();
+}
+
+async function deleteBook() {
+    if (!selectedBookId) {
+        alert("Please select a book to delete.");
+        return;
+    }
+
+    const response = await fetch('php/delete.php', {
+        method: "POST",
+        body: JSON.stringify({ bookId: selectedBookId }),
+        headers: { 'Content-Type': 'application/json' }
+    });
+
+    const result = await response.json();
+    alert(result.message);
+    loadBooks();
+}
+
+async function loadBooks() {
+    const response = await fetch('php/read.php');
+    const books = await response.json();
+
+    const tableBody = document.getElementById("book-table-body");
+    tableBody.innerHTML = "";
+
+    books.forEach(book => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${book.book_ID}</td>
+            <td>${book.title}</td>
+            <td>${book.author}</td>
+            <td>${book.ISBN}</td>
+            <td>${book.price}</td>
+            <td>${book.description}</td>
+        `;
+        row.addEventListener('click', () => selectBook(book));
+        tableBody.appendChild(row);
+    });
+}
+
+function selectBook(book) {
+    selectedBookId = book.book_ID;
+    document.getElementById("title").value = book.title;
+    document.getElementById("author").value = book.author;
+    document.getElementById("isbn").value = book.ISBN;
+    document.getElementById("price").value = book.price;
+    document.getElementById("description").value = book.description;
+}
+
+window.onload = loadBooks;

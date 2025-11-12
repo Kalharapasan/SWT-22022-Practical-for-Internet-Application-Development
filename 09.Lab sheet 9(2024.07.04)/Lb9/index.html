@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Login and Registration</title>
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  
+  <script>
+    async function login() {
+      const username = document.getElementById('loginUsername').value;
+      const password = document.getElementById('loginPassword').value;
+
+      const response = await fetch('php/login.php', {
+        method: 'POST',
+        body: JSON.stringify({ username, password }),
+        headers: { 'Content-Type': 'application/json' }
+      });
+
+      const result = await response.json();
+      if (result.message === "Login success") {
+        window.location.href = "dashboard.html";
+      } else {
+        alert(result.message);
+      }
+    }
+
+    async function register() {
+      const username = document.getElementById("registerUsername").value;
+      const email = document.getElementById("registerEmail").value;
+      const password = document.getElementById("registerPassword").value;
+
+      const response = await fetch('php/register.php', {
+        method: 'POST',
+        body: JSON.stringify({ username, email, password }),
+        headers: { 'Content-Type': 'application/json' }
+      });
+
+      const result = await response.json();
+      alert(result.message);
+    }
+
+    function showRegistration() {
+      document.getElementById('registration').style.display = 'block';
+      document.getElementById('login').style.display = 'none';
+    }
+
+    function showLogin() {
+      document.getElementById('registration').style.display = 'none';
+      document.getElementById('login').style.display = 'block';
+    }
+  </script>
+</head>
+<body class="bg-light">
+
+  <div class="container mt-5">
+    <div class="mb-3 d-flex justify-content-center">
+      <button class="mr-2 btn btn-primary" onclick="showRegistration()">Register</button>
+      <button class="btn btn-secondary" onclick="showLogin()">Login</button>
+    </div>
+
+    <div id="registration" class="p-4 shadow-sm card" style="display: none; max-width: 400px; margin: auto;">
+      <h2 class="text-center">Registration</h2>
+      <div class="form-group">
+        <label for="registerUsername">Username</label>
+        <input type="text" class="form-control" id="registerUsername" placeholder="Username" required>
+      </div>
+      <div class="form-group">
+        <label for="registerEmail">Email Address</label>
+        <input type="email" class="form-control" id="registerEmail" placeholder="Email Address" required>
+      </div>
+      <div class="form-group">
+        <label for="registerPassword">Password</label>
+        <input type="password" class="form-control" id="registerPassword" placeholder="Password" required>
+      </div>
+      <button class="btn btn-success btn-block" onclick="register()">Register</button>
+    </div>
+
+    <div id="login" class="p-4 shadow-sm card" style="display: block; max-width: 400px; margin: auto;">
+      <h2 class="text-center">Login</h2>
+      <div class="form-group">
+        <label for="loginUsername">Username</label>
+        <input type="text" class="form-control" id="loginUsername" placeholder="Username" required>
+      </div>
+      <div class="form-group">
+        <label for="loginPassword">Password</label>
+        <input type="password" class="form-control" id="loginPassword" placeholder="Password" required>
+      </div>
+      <button class="btn btn-primary btn-block" onclick="login()">Login</button>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS and dependencies (jQuery and Popper.js) -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

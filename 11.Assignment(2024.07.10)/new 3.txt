@@ -1,0 +1,27 @@
+-- Create the database
+CREATE DATABASE SEU_IS_20_ICT_084;
+USE SEU_IS_20_ICT_084;
+
+-- Create the bookICT084 table
+CREATE TABLE bookICT084 (
+    book_ID INT(10) AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    author VARCHAR(255) NOT NULL,
+    ISBN VARCHAR(20) NOT NULL,
+    price DECIMAL(10, 2) NOT NULL,
+    description TEXT
+);
+
+-- Insert sample data into the bookICT084 table
+INSERT INTO bookICT084 (title, author, ISBN, price, description) VALUES
+('To Kill a Mockingbird', 'Harper Lee', '9780061120084', 7.99, 'A novel about the serious issues of rape and racial inequality.'),
+('1984', 'George Orwell', '9780451524935', 9.99, 'A dystopian social science fiction novel and cautionary tale about the dangers of totalitarianism.'),
+('The Great Gatsby', 'F. Scott Fitzgerald', '9780743273565', 10.99, 'A story about the young and mysterious millionaire Jay Gatsby and his quixotic passion for the beautiful Daisy Buchanan.'),
+('Pride and Prejudice', 'Jane Austen', '9781503290563', 8.99, 'A romantic novel of manners that depicts the British Regency-era society.'),
+('The Catcher in the Rye', 'J.D. Salinger', '9780316769488', 6.99, 'A story about the events and circumstances that happen to a 16-year-old boy named Holden Caulfield.'),
+('Moby Dick', 'Herman Melville', '9781503280786', 11.50, 'A novel about the voyage of the whaling ship Pequod, led by Captain Ahab who is intent on finding the elusive whale Moby Dick.'),
+('War and Peace', 'Leo Tolstoy', '9781420959715', 12.99, 'A novel that intertwines the lives of private and public individuals during the time of the Napoleonic wars and French invasion of Russia.'),
+('The Odyssey', 'Homer', '9780140268867', 13.99, 'An epic poem that follows the Greek hero Odysseus and his journey home after the fall of Troy.'),
+('The Hobbit', 'J.R.R. Tolkien', '9780547928227', 8.99, 'A fantasy novel that precedes the events of The Lord of the Rings trilogy.'),
+('Alice\'s Adventures in Wonderland', 'Lewis Carroll', '9781503250215', 7.50, 'A novel about a young girl named Alice who falls through a rabbit hole into a fantastical world.')
+;

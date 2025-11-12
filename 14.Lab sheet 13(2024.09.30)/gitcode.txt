@@ -1,0 +1,36 @@
+# Verify Git installation
+git --version
+
+# Configure Git
+git config --global user.name Kalhara
+git config --global user.email pasansawmya@gmail.com
+git config --list
+
+# Initialize a local repository
+git init
+
+# Add files to the staging area
+git add .               # Add all files
+git add text.html   # Add a specific file
+
+# Commit changes
+git commit -m "Add HTML File"
+
+# Add remote repository
+git remote add origin https://github.com/Kalhara84/LB13.git
+
+# Push changes to GitHub
+git push -u origin master
+
+# Create and switch branches
+git checkout -b Branche_01   # Create and switch to a new branch
+git checkout Branche_01    # Switch to an existing branch
+
+# Push a branch to GitHub
+git push -u origin Branche_01
+
+# Pull changes from the remote repository
+git pull origin Branche_01
+
+# Clone a repository
+git clone https://github.com/Kalhara84/LB13.git

@@ -1,0 +1,130 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ToDo Application</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1 class="mt-5">ToDo Application</h1>
+        <div class="mt-4">
+            <form id="taskForm">
+                <div class="form-group">
+                    <label for="title">Title</label>
+                    <input type="text" class="form-control" id="title" name="title" required>
+                </div>
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Add Task</button>
+            </form>
+        </div>
+        <div class="mt-4">
+            <h2>Task List</h2>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Title</th>
+                        <th>Description</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="taskList">
+                    <!-- Task items will be appended here dynamically -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Fetch tasks
+            function fetchTasks() {
+                $.ajax({
+                    url: 'crud.php',
+                    method: 'GET',
+                    success: function(response) {
+                        let tasks = JSON.parse(response);
+                        let taskList = $('#taskList');
+                        taskList.empty();
+                        tasks.forEach(function(task) {
+                            taskList.append(`
+                                <tr>
+                                    <td>${task.id}</td>
+                                    <td>${task.title}</td>
+                                    <td>${task.description}</td>
+                                    <td>
+                                        <button class="btn btn-warning btn-sm edit-task" data-id="${task.id}">Edit</button>
+                                        <button class="btn btn-danger btn-sm delete-task" data-id="${task.id}">Delete</button>
+                                    </td>
+                                </tr>
+                            `);
+                        });
+                    }
+                });
+            }
+
+            fetchTasks();
+
+            // Add task
+            $('#taskForm').submit(function(e) {
+                e.preventDefault();
+                let title = $('#title').val();
+                let description = $('#description').val();
+
+                $.ajax({
+                    url: 'crud.php',
+                    method: 'POST',
+                    data: { title: title, description: description },
+                    success: function(response) {
+                        alert(response);
+                        fetchTasks();
+                        $('#taskForm')[0].reset();
+                    }
+                });
+            });
+
+            // Edit task
+            $(document).on('click', '.edit-task', function() {
+                let id = $(this).data('id');
+                let title = prompt("Enter new title:");
+                let description = prompt("Enter new description:");
+
+                $.ajax({
+                    url: 'crud.php',
+                    method: 'PUT',
+                    data: { id: id, title: title, description: description },
+                    success: function(response) {
+                        alert(response);
+                        fetchTasks();
+                    }
+                });
+            });
+
+            // Delete task
+            $(document).on('click', '.delete-task', function() {
+                let id = $(this).data('id');
+
+                if (confirm("Are you sure you want to delete this task?")) {
+                    $.ajax({
+                        url: 'crud.php',
+                        method: 'DELETE',
+                        data: { id: id },
+                        success: function(response) {
+                            alert(response);
+                            fetchTasks();
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
